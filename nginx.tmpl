@@ -79,7 +79,7 @@ server {
 {{ range $container := $containers }}
 	{{ $addrLen := len $container.Addresses }}
 	{{ $matchingNetworks := (whereAny $container.Networks "Name" " " (groupByKeys $CurrentContainer.Networks "Name")) }}
-
+# matching networks = {{ $matchingNetworks }}
 	{{ if $matchingNetworks }}
 upstream {{ $host }} {
 	{{ range $network := $matchingNetworks }}
