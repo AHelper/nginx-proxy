@@ -77,30 +77,12 @@ server {
 
 {{/* Don't emit unless upstream server is accessible from nginx */}}
 {{ range $container := $containers }}
-  {{ $reachable := false }}
-	{{ $address := "" }}
-	{{ $network := "" }}
-	{{ $pass := dict "Reachable" false }}
 	{{ $addrLen := len $container.Addresses }}
-	{{ range $knownNetwork := $CurrentContainer.Networks }}
-		{{ range $containerNetwork := $container.Networks }}
-			{{ if eq $knownNetwork.Name $containerNetwork.Name }}
-			  # Reachable
-				{{ $reachable := true }}
-				{{ $network := $containerNetwork }}
-				{{ $pass.Reachable := true }}
-				# pass = {{ $pass }}
-			{{ end }}
-		{{ end }}
-	{{ end }}
+	{{ $matchingNetworks := (whereAny $container.Networks "Name" " " (groupByKeys $CurrentContainer.Networks "Name")) }}
 
-# container = {{ $container.Name }}
-# reachable = {{ $reachable }}
-# network = {{ $network }}
-# pass = {{ $pass }}
-
-	{{ if $reachable }}
+	{{ if $matchingNetworks }}
 upstream {{ $host }} {
+	{{ range $network := $matchingNetworks }}
 	## Reachable on "{{ $network.Name }}" network
 	{{/* If only 1 port exposed, use that */}}
 	{{ if eq $addrLen 1 }}
@@ -234,7 +216,7 @@ server {
 {{ end }}
 {{ end }}
 
-{{/* if $reachable */}}
+{{/* if $matchingNetworks */}}
 {{ end }}
 {{/* range $container := $containers */}}
 {{ end }}
