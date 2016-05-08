@@ -78,6 +78,7 @@ server {
 {{ range $container := $containers }}
   {{ $reachable := false }}
 	{{ $address := "" }}
+	{{ $network := "" }}
 	{{ $addrLen := len $container.Addresses }}
 	{{ range $knownNetwork := $CurrentContainer.Networks }}
 		{{ range $containerNetwork := $container.Networks }}
