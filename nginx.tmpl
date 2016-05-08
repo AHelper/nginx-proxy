@@ -89,6 +89,10 @@ server {
 		{{ end }}
 	{{ end }}
 
+# container = {{ $container.Name }}
+# reachable = {{ $reachable }}
+# network = {{ $network }}
+
 	{{ if $reachable }}
 upstream {{ $host }} {
 	## Reachable on "{{ $network.Name }}" network
