@@ -94,6 +94,7 @@ upstream {{ $host }} {
 		{{ $address := where $container.Addresses "Port" $port | first }}
 		{{ template "upstream" (dict "Container" $container "Address" $address "Network" $network) }}
 	{{ end }}
+	{{ end }}
 }
 
 {{ $default_host := or ($.Env.DEFAULT_HOST) "" }}
