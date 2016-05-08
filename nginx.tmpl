@@ -79,12 +79,16 @@ server {
   {{ $reachable := false }}
 	{{ $address := "" }}
 	{{ $network := "" }}
+	{{ $pass = dict Reachable false }}
 	{{ $addrLen := len $container.Addresses }}
 	{{ range $knownNetwork := $CurrentContainer.Networks }}
 		{{ range $containerNetwork := $container.Networks }}
 			{{ if eq $knownNetwork.Name $containerNetwork.Name }}
+			  # Reachable
 				{{ $reachable := true }}
 				{{ $network := $containerNetwork }}
+				{{ $pass.Reachable := true }}
+				# pass = {{ $pass }}
 			{{ end }}
 		{{ end }}
 	{{ end }}
@@ -92,6 +96,7 @@ server {
 # container = {{ $container.Name }}
 # reachable = {{ $reachable }}
 # network = {{ $network }}
+# pass = {{ $pass }}
 
 	{{ if $reachable }}
 upstream {{ $host }} {
