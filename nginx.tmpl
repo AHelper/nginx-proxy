@@ -1,5 +1,5 @@
 {{ $CurrentContainer := where $ "ID" .Docker.CurrentContainerID | first }}
-{{ $supportsNetworks := gt (len $CurrentContainer.Networks) 0 }}
+{{ $supportsNetworks := and (gt (len $CurrentContainer.Networks) 0) (or $CurrentContainer) }}
 # supports networks = {{ when $supportsNetworks "yes" "no" }}
 
 {{ define "upstream" }}
