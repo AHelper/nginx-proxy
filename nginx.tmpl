@@ -1,5 +1,6 @@
 {{ $CurrentContainer := where $ "ID" .Docker.CurrentContainerID | first }}
-# current container = {{ $CurrentContainer }}
+{{ $supportsNetworks := gt (len $CurrentContainer.Networks) 0 }}
+# supports networks = {{ when $supportsNetworks "yes" "no" }}
 
 {{ define "upstream" }}
 	{{ if .Address }}
@@ -78,7 +79,7 @@ server {
 {{/* Don't emit unless upstream server is accessible from nginx */}}
 {{ range $container := $containers }}
 	{{ $addrLen := len $container.Addresses }}
-	{{ $matchingNetworks := (whereAny $container.Networks "Name" " " (groupByKeys $CurrentContainer.Networks "Name")) }}
+	{{ $matchingNetworks := when $supportsNetworks (whereAny $container.Networks "Name" " " (groupByKeys $CurrentContainer.Networks "Name")) (dict "legacy" (dict "Name" "bridge" "IP" $container.IP)) }}
 # matching networks = {{ $matchingNetworks }}
 	{{ if $matchingNetworks }}
 upstream {{ $host }} {
